@@ -3,23 +3,22 @@ let display = document.getElementById('display');
 
 function appendToDisplay(value) {
     if (value === 'sqrt') {
-        currentInput += 'Math.sqrt(' + currentInput + ')';
+        currentInput = 'Math.sqrt(' + currentInput + ')';
     } else if (value === '^') {
         currentInput += '**';
-    } else if (value === 'sin' || value === 'cos' || value === 'tan') {
-        currentInput += 'Math.' + value + '(' + currentInput + ')';
+    } else if (['sin', 'cos', 'tan'].includes(value)) {
+        currentInput = `Math.${value}(` + currentInput + ')';
     } else if (value === 'fraction') {
-        currentInput += '1/';
+        currentInput = `1/(${currentInput})`;
     } else if (value === 'X') {
-        currentInput += 'x';
+        currentInput += '*';
     } else if (value === '÷') {
-        currentInput += '÷';
+        currentInput += '/';
     } else {
         currentInput += value;
     }
 
-    const displayText = currentInput.replace(/\*/g, 'x').replace(/÷/g, '÷');
-    display.value = displayText;
+    display.value = currentInput.replace(/\*/g, 'X').replace(/\//g, '÷');
 }
 
 function clearDisplay() {
@@ -29,11 +28,11 @@ function clearDisplay() {
 
 function calculateResult() {
     try {
-        const sanitizedInput = currentInput.replace(/x/g, '*').replace(/÷/g, '/');
-        const result = new Function('return ' + sanitizedInput)();
-        currentInput = result;
+        const result = new Function('return ' + currentInput)();
+        currentInput = String(result);
         display.value = result;
     } catch (error) {
         display.value = 'Error';
+        currentInput = ''; 
     }
 }
